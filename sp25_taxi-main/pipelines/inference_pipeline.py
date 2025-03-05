@@ -39,7 +39,8 @@ model = load_model_from_registry()
 
 predictions = get_model_predictions(model, features)
 predictions["pickup_hour"] = current_date.ceil("h")
-print(predictions)
+print(predictions.sort_values(by=['pickup_hour'], ascending=False).head(30))
+
 
 feature_group = get_feature_store().get_or_create_feature_group(
     name=config.FEATURE_GROUP_MODEL_PREDICTION,
