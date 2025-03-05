@@ -6,8 +6,10 @@ from hsml.model_schema import ModelSchema
 from hsml.schema import Schema
 from sklearn.metrics import mean_absolute_error
 
-# Ensure Python recognizes `src/`
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Ensure Python recognizes the src/ folder
+current_dir = os.path.dirname(__file__)  # e.g. /path/to/this_script
+project_root = os.path.abspath(os.path.join(current_dir, ".."))  # go up one level
+sys.path.append(project_root)
 
 import src.config as config
 from src.data_utils import transform_ts_data_info_features_and_target
@@ -33,7 +35,7 @@ try:
     ts_data = fetch_days_data(180)
 
     if ts_data.empty:
-        raise ValueError("⚠️ No data fetched from the feature store!")
+        raise ValueError("⚠ No data fetched from the feature store!")
 
     logger.info(f"✅ Data fetched. Number of records: {len(ts_data)}")
 
@@ -44,7 +46,7 @@ try:
     )
 
     if features.empty or targets.empty:
-        raise ValueError("⚠️ Transformation resulted in an empty dataset!")
+        raise ValueError("⚠ Transformation resulted in an empty dataset!")
 
     logger.info(f"✅ Transformation complete. Feature shape: {features.shape}")
 
@@ -52,7 +54,7 @@ try:
     pipeline = get_pipeline()
 
     # Step 4: Train Model
-    logger.info("🛠️ Training model ...")
+    logger.info("🛠 Training model ...")
     pipeline.fit(features, targets)
 
     # Step 5: Evaluate Model
@@ -84,9 +86,8 @@ try:
         )
         model.save(model_path)
         logger.info("✅ Model registered successfully!")
-
     else:
-        logger.info("⚠️ Skipping model registration because new model is not better!")
+        logger.info("⚠ Skipping model registration because new model is not better!")
 
 except Exception as e:
     logger.error(f"❌ Error occurred: {e}")

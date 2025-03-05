@@ -112,9 +112,14 @@ class ResultMetaData:
         # Usage of `getattr` only needed for backward compatibility with
         # older versions of SQLAlchemy.
         typemap = getattr(dialect, 'dbapi_type_map', {})
-
-        assert dialect.case_sensitive, \
-            "Doesn't support case insensitive database connection"
+        try:
+            assert dialect.case_sensitive, \
+                "Doesn't support case insensitive database connection"
+        except AttributeError:
+            # for sqlalchemy > 1.4 we face attribute error for mysql dialect
+            # so we just bypass it. Adding logging here is may lead to excessive logging
+            # as this method is called for each query result
+            pass
 
         # high precedence key values.
         primary_keymap = {}

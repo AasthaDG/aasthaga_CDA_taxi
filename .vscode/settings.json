@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./sp25_taxi-main/src"
+    ]
+}
